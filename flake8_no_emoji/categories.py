@@ -34,6 +34,7 @@ CATEGORIES: dict[str, List[Tuple[int, int]]] = {
     ],
 }
 
+
 def get_category(grapheme: str) -> str:
     """Return a category name for the given emoji grapheme."""
     for cp in (ord(ch) for ch in grapheme):
