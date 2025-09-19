@@ -1,99 +1,83 @@
-import re
-import unicodedata
-from typing import List, Tuple, Optional
+# flake8_no_emoji/checker.py
+import regex  # dependency: add "regex" to install_requires
+from typing import Generator, Tuple, Type
+
+from .categories import get_category
 
 
 class NoEmojiChecker:
     name = "flake8-no-emoji"
-    version = "1.0"
+    version = "0.1.0"
     _error_tmpl = "EMO001 Emoji detected in code"
 
-    emoji_pattern = re.compile(
-        "["
-        "\U0001F300-\U0001F5FF"  # symbols & pictographs
-        "\U0001F600-\U0001F64F"  # emoticons
-        "\U0001F680-\U0001F6FF"  # transport & map
-        "\U0001F700-\U0001F77F"  # alchemical
-        "\U0001F780-\U0001F7FF"  # geometric
-        "\U0001F800-\U0001F8FF"  # arrows
-        "\U0001F900-\U0001F9FF"  # supplemental symbols
-        "\U0001FA00-\U0001FA6F"  # chess, dice, etc.
-        "\U0001FA70-\U0001FAFF"  # symbols & pictographs ext-A
-        "\U00002700-\U000027BF"  # dingbats
-        "\U00002600-\U000026FF"  # misc symbols
-        "]+",
-        flags=re.UNICODE,
-    )
-
-    CATEGORY_MAP = {
-        "PEOPLE": ["EMOTICONS", "SUPPLEMENTAL SYMBOLS AND PICTOGRAPHS"],
-        "ANIMAL": ["ANIMALS & NATURE", "SUPPLEMENTAL SYMBOLS AND PICTOGRAPHS"],
-        "SYMBOL": ["DINGBATS", "MISCELLANEOUS SYMBOLS"],
-    }
-
-    def __init__(self, tree, filename: str = "stdin"):
-        self.filename = filename
-        self.only: Optional[List[str]] = None
-        self.ignore: Optional[List[str]] = None
+    # We'll iterate over grapheme clusters (\X) and test whether cluster contains emoji property.
+    GRAPHEME_RE = regex.compile(r"\X", flags=regex.VERSION1)
 
     @classmethod
-    def add_options(cls, parser):
+    def add_options(cls, parser) -> None:
         parser.add_option(
             "--ignore-emoji-types",
             default="",
             parse_from_config=True,
-            help="Comma-separated categories of emojis to ignore",
+            help="Comma-separated list of emoji categories to ignore (PEOPLE,NATURE,FOOD,...)",
         )
         parser.add_option(
             "--only-emoji-types",
             default="",
             parse_from_config=True,
-            help="Comma-separated categories of emojis to allow detection for",
+            help="Comma-separated list of emoji categories to check exclusively (takes precedence over ignore).",
         )
 
     @classmethod
-    def parse_options(cls, options):
-        cls.ignore = [x.strip().upper() for x in options.ignore_emoji_types.split(",") if x]
-        cls.only = [x.strip().upper() for x in options.only_emoji_types.split(",") if x]
+    def parse_options(cls, options) -> None:
+        # store as class attributes (flake8 calls this once)
+        cls._ignore_categories = {
+            s.strip().upper() for s in getattr(options, "ignore_emoji_types", "").split(",") if s.strip()
+        }
+        cls._only_categories = {
+            s.strip().upper() for s in getattr(options, "only_emoji_types", "").split(",") if s.strip()
+        }
 
-    def run(self) -> List[Tuple[int, int, str, type]]:
+    def __init__(self, tree, filename: str = "stdin") -> None:
+        # filename is provided by flake8; "stdin" indicates piped input
+        self.filename = filename
+
+    def run(self) -> Generator[Tuple[int, int, str, Type["NoEmojiChecker"]], None, None]:
+        """
+        Iterate over file lines, split into grapheme clusters, find emoji clusters,
+        decide by categories (only / ignore), and yield flake8 errors.
+        Column is 0-based.
+        """
         if self.filename == "stdin":
-            return []
+            return
 
         try:
-            with open(self.filename, encoding="utf-8") as f:
-                code = f.read()
-        except OSError:
-            return []
+            with open(self.filename, "r", encoding="utf-8") as f:
+                lines = f.readlines()
+        except (OSError, UnicodeDecodeError):
+            return
 
-        matches = []
-        for match in self.emoji_pattern.finditer(code):
-            emoji_char = match.group(0)
-            category = self._get_category(emoji_char)
-
-            if self.only:
-                if category not in self.only:
-                    continue
-            elif self.ignore:
-                if category in self.ignore:
+        for lineno, line in enumerate(lines, start=1):
+            for match in self.GRAPHEME_RE.finditer(line):
+                grapheme = match.group(0)
+                # quick test: does cluster contain an emoji codepoint?
+                # regex property \p{Emoji} matches emoji codepoints; search inside cluster
+                if not regex.search(r"\p{Emoji}", grapheme):
                     continue
 
-            line = code.count("\n", 0, match.start()) + 1
-            col = match.start() - code.rfind("\n", 0, match.start()) - 1
-            matches.append((line, col, self._error_tmpl, type(self)))
-        return matches
+                # Determine category by codepoint ranges
+                category = get_category(grapheme).upper()
 
-    def _get_category(self, char: str) -> str:
-        try:
-            name = unicodedata.name(char)
-        except ValueError:
-            return "OTHER"
+                # only takes precedence
+                only = getattr(self.__class__, "_only_categories", set())
+                ignore = getattr(self.__class__, "_ignore_categories", set())
 
-        name = name.upper()
-        if "FACE" in name or "SMILE" in name or "HAND" in name or "PERSON" in name:
-            return "PEOPLE"
-        if "CAT" in name or "DOG" in name or "ANIMAL" in name:
-            return "ANIMAL"
-        if "SYMBOL" in name or "DINGBAT" in name or "STAR" in name:
-            return "SYMBOL"
-        return "OTHER"
+                if only:
+                    if category not in only:
+                        continue
+                elif ignore:
+                    if category in ignore:
+                        continue
+
+                col = match.start()  # 0-based column (flake8 expects 0-based)
+                yield lineno, col, self._error_tmpl, type(self)
