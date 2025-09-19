@@ -13,14 +13,14 @@ Helps keep your codebase clean, consistent, and free from unwanted Unicode emoji
 
 **Note:** Do not set the same category in both `--ignore-emoji-types` and `--only-emoji-types`, as `only` takes precedence.
 
-* 🔍 Scans Python files for **all Unicode emoji characters** (including multi-codepoint clusters).
-* 🚫 Raises a linting error (`EMO001`) when emojis are found.
-* ⚙️ Supports filtering by **emoji categories**:
+* Scans Python files for **all Unicode emoji characters** (including multi-codepoint clusters).
+* Raises a linting error (`EMO001`) when emojis are found.
+* Supports filtering by **emoji categories**:
 
     * `--ignore-emoji-types=PEOPLE,FOOD`
     * `--only-emoji-types=FLAGS`
-* 🛠️ Works seamlessly with **Flake8** and **pre-commit hooks**.
-* ⚡ Lightweight and dependency-minimal (`regex` and `emoji` required).
+* Works seamlessly with **Flake8** and **pre-commit hooks**.
+* Lightweight and dependency-minimal (`regex` and `emoji` required).
 
 ---
 
