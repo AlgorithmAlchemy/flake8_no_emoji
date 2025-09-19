@@ -20,7 +20,7 @@ Helps keep your codebase clean, consistent, and free from unwanted Unicode emoji
     * `--ignore-emoji-types=PEOPLE,FOOD`
     * `--only-emoji-types=FLAGS`
 * 🛠️ Works seamlessly with **Flake8** and **pre-commit hooks**.
-* ⚡ Lightweight and dependency-minimal (`regex` only).
+* ⚡ Lightweight and dependency-minimal (`regex` and `emoji` required).
 
 ---
 
@@ -78,7 +78,7 @@ Add to `.pre-commit-config.yaml`:
 ```yaml
 repos:
   - repo: https://github.com/AlgorithmAlchemy/flake8-no-emoji
-    rev: v0.1.0
+    rev: v0.2.1
     hooks:
       - id: flake8
         additional_dependencies: [flake8-no-emoji]
