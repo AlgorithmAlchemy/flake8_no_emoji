@@ -1,52 +1,41 @@
-# flake8_no_emoji/categories.py
-"""
-Emoji categories defined by Unicode codepoint ranges.
-We test codepoints in an emoji grapheme cluster and return the first matching category.
-"""
-
 from typing import List, Tuple
 
-# Each category maps to list of (start, end) codepoint ranges (inclusive).
+# Emoji categories defined by Unicode codepoint ranges.
 CATEGORIES: dict[str, List[Tuple[int, int]]] = {
     "PEOPLE": [
         (0x1F600, 0x1F64F),  # emoticons
         (0x1F466, 0x1F487),  # people & body
+        (0x1F9D0, 0x1F9E6),  # additional people
     ],
     "NATURE": [
-        (0x1F300, 0x1F5FF),  # symbols & pictographs (many nature items too)
-        (0x1F400, 0x1F4FF),  # animals & other pictographs
+        (0x1F400, 0x1F4D3),  # animals & nature
+        (0x1F300, 0x1F32F),  # weather, plants
     ],
     "FOOD": [
-        (0x1F32D, 0x1F37F),  # food & drink related
+        (0x1F32D, 0x1F37F),
     ],
     "ACTIVITY": [
-        (0x1F3A0, 0x1F3FF),  # activities
+        (0x1F3A0, 0x1F3FF),
     ],
     "TRAVEL": [
-        (0x1F680, 0x1F6FF),  # transport & map symbols
+        (0x1F680, 0x1F6FF),
     ],
     "OBJECTS": [
-        (0x1F4A0, 0x1F4FF),  # objects / office / tech
+        (0x1F4A0, 0x1F4FF),
         (0x1F50A, 0x1F52F),
     ],
     "SYMBOLS": [
         (0x1F500, 0x1F5FF),
         (0x2600, 0x26FF),
-        (0x2700, 0x27BF),  # dingbats
+        (0x2700, 0x27BF),
     ],
     "FLAGS": [
-        (0x1F1E6, 0x1F1FF),  # regional indicator symbols (pairs form country flags)
+        (0x1F1E6, 0x1F1FF),
     ],
-    # add more categories/ranges if needed
 }
 
-
 def get_category(grapheme: str) -> str:
-    """
-    Return a category name for the given grapheme cluster.
-    We check each codepoint in the cluster against defined ranges.
-    Returns 'OTHER' if no range matches.
-    """
+    """Return a category name for the given emoji grapheme."""
     for cp in (ord(ch) for ch in grapheme):
         for category, ranges in CATEGORIES.items():
             for start, end in ranges:
