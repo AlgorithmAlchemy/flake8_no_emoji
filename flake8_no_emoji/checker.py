@@ -31,6 +31,13 @@ class NoEmojiChecker:
             s.strip().upper() for s in getattr(options, "only_emoji_types", "").split(",") if s.strip()
         }
 
+        # ⚠️ Запрет одновременного использования
+        if cls._ignore_categories & cls._only_categories:
+            raise ValueError(
+                f"Cannot use both --ignore-emoji-types={','.join(cls._ignore_categories)} "
+                f"and --only-emoji-types={','.join(cls._only_categories)} at the same time."
+            )
+
     def __init__(self, tree, filename: str = "stdin") -> None:
         self.filename = filename
 
