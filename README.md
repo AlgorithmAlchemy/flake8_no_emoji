@@ -11,6 +11,8 @@ Helps keep your codebase clean, consistent, and free from unwanted Unicode emoji
 
 ## ✨ Features
 
+**Note:** Do not set the same category in both `--ignore-emoji-types` and `--only-emoji-types`, as `only` takes precedence.
+
 * 🔍 Scans Python files for **all Unicode emoji characters** (including multi-codepoint clusters).
 * 🚫 Raises a linting error (`EMO001`) when emojis are found.
 * ⚙️ Supports filtering by **emoji categories**:
