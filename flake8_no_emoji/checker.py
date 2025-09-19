@@ -1,6 +1,8 @@
+# flake8_no_emoji/checker.py
 from typing import Generator, Tuple, Type
-from .categories import get_category
 import emoji
+import regex as re
+from .categories import get_category
 
 class NoEmojiChecker:
     name = "flake8-no-emoji"
@@ -31,18 +33,15 @@ class NoEmojiChecker:
             s.strip().upper() for s in getattr(options, "only_emoji_types", "").split(",") if s.strip()
         }
 
-        # ⚠️ Запрет одновременного использования
         if cls._ignore_categories & cls._only_categories:
             raise ValueError(
-                f"Cannot use both --ignore-emoji-types={','.join(cls._ignore_categories)} "
-                f"and --only-emoji-types={','.join(cls._only_categories)} at the same time."
+                "Cannot use the same category in both --ignore-emoji-types and --only-emoji-types"
             )
 
     def __init__(self, tree, filename: str = "stdin") -> None:
         self.filename = filename
 
     def run(self) -> Generator[Tuple[int, int, str, Type["NoEmojiChecker"]], None, None]:
-        """Iterate file, detect emoji using categories, yield all emoji per line."""
         if self.filename == "stdin":
             return
 
@@ -52,18 +51,18 @@ class NoEmojiChecker:
         except (OSError, UnicodeDecodeError):
             return
 
-        only = getattr(self.__class__, "_only_categories", set())
-        ignore = getattr(self.__class__, "_ignore_categories", set())
-
         for lineno, line in enumerate(lines, start=1):
-            for idx, char in enumerate(line):
-                if not char.strip():
-                    continue  # skip whitespace/control chars
-                if emoji.is_emoji(char):
-                    category = get_category(char).upper()
-                    # Only takes precedence
-                    if only and category not in only:
+            # Use regex \X to get extended grapheme clusters
+            for match in re.finditer(r"\X", line):
+                grapheme = match.group()
+                if emoji.is_emoji(grapheme):
+                    category = get_category(grapheme).upper() if get_category else None
+                    only = getattr(self.__class__, "_only_categories", set())
+                    ignore = getattr(self.__class__, "_ignore_categories", set())
+
+                    if only and category and category not in only:
                         continue
-                    if ignore and category in ignore:
+                    if ignore and category and category in ignore:
                         continue
-                    yield lineno, idx, self._error_tmpl, type(self)
+
+                    yield lineno, match.start(), self._error_tmpl, type(self)
