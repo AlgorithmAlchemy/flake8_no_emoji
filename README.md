@@ -15,8 +15,8 @@ Helps keep your codebase clean, consistent, and free from unwanted Unicode emoji
 * 🚫 Raises a linting error (`EMO001`) when emojis are found.
 * ⚙️ Supports filtering by **emoji categories**:
 
-  * `--ignore-emoji-types=PEOPLE,FOOD`
-  * `--only-emoji-types=FLAGS`
+    * `--ignore-emoji-types=PEOPLE,FOOD`
+    * `--only-emoji-types=FLAGS`
 * 🛠️ Works seamlessly with **Flake8** and **pre-commit hooks**.
 * ⚡ Lightweight and dependency-minimal (`regex` only).
 
