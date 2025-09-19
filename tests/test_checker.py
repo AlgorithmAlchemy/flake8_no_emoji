@@ -7,29 +7,22 @@ from types import SimpleNamespace
 
 from flake8_no_emoji.checker import NoEmojiChecker
 
-
 def run_checker_on_content(content, ignore_emoji_types=None, only_emoji_types=None):
-    """Helper: write content to a temp file, set parser options via parse_options,
-    run checker and return results. Ensures temp file is removed."""
+    """Helper: write content to a temp file, set parser options, run checker and return results."""
     fd, path = tempfile.mkstemp(suffix=".py", text=True)
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as f:
             f.write(content)
 
-        # Prepare options object expected by parse_options
         opts = SimpleNamespace(
             ignore_emoji_types=(ignore_emoji_types or ""),
             only_emoji_types=(only_emoji_types or ""),
         )
-        # Feed options to checker class (the code under test should provide parse_options)
-        if hasattr(NoEmojiChecker, "parse_options"):
-            NoEmojiChecker.parse_options(opts)
-        else:
-            # backward compatibility: try to set class attrs directly (rare)
-            NoEmojiChecker.ignore = [x.strip().upper() for x in opts.ignore_emoji_types.split(",") if x]
-            NoEmojiChecker.only = [x.strip().upper() for x in opts.only_emoji_types.split(",") if x]
+        NoEmojiChecker.parse_options(opts)
 
         checker = NoEmojiChecker(tree=None, filename=path)
+        checker._ignore_categories = NoEmojiChecker._ignore_categories
+        checker._only_categories = NoEmojiChecker._only_categories
         return list(checker.run())
     finally:
         try:
@@ -51,13 +44,13 @@ def test_ignore_category_people():
 def test_only_category_animals():
     results = run_checker_on_content("x = '🐶'", only_emoji_types="ANIMAL")
     assert results, "ANIMAL emoji should be detected when only=ANIMAL"
+
     # PEOPLE should not be caught when only=ANIMAL
     results = run_checker_on_content("x = '😀'", only_emoji_types="ANIMAL")
     assert results == [], "PEOPLE emoji should not be detected when only=ANIMAL"
 
 
 def test_only_takes_precedence_over_ignore():
-    # only=ANIMAL should keep animal even if ignore also mentions it (only wins)
     results = run_checker_on_content("x = '🐶 😀'", only_emoji_types="ANIMAL", ignore_emoji_types="ANIMAL")
     assert results, "only should take precedence over ignore"
 
@@ -70,7 +63,6 @@ def test_stdin_skips_check():
 def test_oserror_on_open(monkeypatch):
     def bad_open(*a, **k):
         raise OSError
-
     monkeypatch.setattr(builtins, "open", bad_open)
     checker = NoEmojiChecker(tree=None, filename="fake_nonexistent.py")
     assert list(checker.run()) == []
@@ -82,18 +74,65 @@ def test_no_pattern_means_no_detection():
 
 
 def test_add_options_registers():
-    """Use DummyParser to avoid depending on flake8 OptionManager implementation/version."""
     class DummyParser:
         def __init__(self):
             self.calls = []
 
         def add_option(self, *args, **kwargs):
-            # record first positional arg (option name) and kwargs
             self.calls.append((args, kwargs))
 
     parser = DummyParser()
     NoEmojiChecker.add_options(parser)
-
     names = [args[0] if args else None for args, _ in parser.calls]
-    assert "--ignore-emoji-types" in names, "add_options should register --ignore-emoji-types"
-    assert "--only-emoji-types" in names, "add_options should register --only-emoji-types"
+    assert "--ignore-emoji-types" in names
+    assert "--only-emoji-types" in names
+
+
+def test_mixed_content():
+    content = """x = '😀'  # PEOPLE
+y = '🐶'  # ANIMAL
+z = '⭐'  # SYMBOL
+"""
+    results = run_checker_on_content(content, ignore_emoji_types="PEOPLE")
+    lines = content.splitlines()
+    detected_chars = [lines[r[0]-1][r[1]-1] for r in results]
+
+    assert "😀" not in detected_chars
+    assert "🐶" in detected_chars
+    assert "⭐" in detected_chars
+
+
+def test_multiple_emojis_in_line():
+    content = "x = '😀🐶⭐'"
+    results = run_checker_on_content(content)
+    chars = [r[0:2] for r in results]  # lineno, col
+    assert len(chars) == 3
+
+
+def test_empty_file():
+    results = run_checker_on_content("")
+    assert results == []
+
+
+def test_only_whitespace_lines():
+    results = run_checker_on_content("\n   \n\t\n")
+    assert results == []
+
+
+def test_unknown_emoji_category():
+    content = "x = '🛸'"  # assume this maps to OTHER
+    results = run_checker_on_content(content)
+    assert results, "Unknown category emoji should be detected"
+
+
+def test_emoji_positions():
+    content = "a='😀'\nb='🐶'\nc='⭐'"
+    results = run_checker_on_content(content)
+    positions = [(r[0], r[1]) for r in results]
+    assert positions == [(1, 4), (2, 4), (3, 4)]
+
+
+def test_emoji_with_modifiers():
+    content = "x='👩‍💻'"
+    results = run_checker_on_content(content)
+    assert results, "Emoji with modifier should be detected"
