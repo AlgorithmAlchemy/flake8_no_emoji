@@ -2,6 +2,8 @@
 
   `⭐️ Thanks everyone who has starred the project, it means a lot!`
 
+[![PyPI](https://img.shields.io/badge/PyPI-v0.2.2-blue?logo=pypi&logoColor=white)](https://pypi.org/project/flake8-no-emoji/)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-black?logo=github&logoColor=white)](https://github.com/AlgorithmAlchemy/flake8-no-emoji)
 ![PyPI version](https://img.shields.io/pypi/v/flake8-no-emoji.svg)
 ![Downloads](https://pepy.tech/badge/flake8-no-emoji)
 ![License](https://img.shields.io/pypi/l/flake8-no-emoji.svg)
