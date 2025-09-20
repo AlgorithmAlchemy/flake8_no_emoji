@@ -1,6 +1,6 @@
 # 📦 flake8-no-emoji
 
-  ⭐️ Thanks **everyone** who has starred the project, it means a lot!
+  `⭐️ Thanks everyone who has starred the project, it means a lot!`
 
 ![PyPI version](https://img.shields.io/pypi/v/flake8-no-emoji.svg)
 ![Downloads](https://pepy.tech/badge/flake8-no-emoji)
@@ -8,9 +8,6 @@
 
 **Flake8 plugin that detects and reports any emoji characters in Python source code.**
 Helps keep your codebase clean, consistent, and free from unwanted Unicode emojis.
-
-📦 PyPI: https://pypi.org/project/flake8-no-emoji/  
-💻 GitHub: https://github.com/AlgorithmAlchemy/flake8-no-emoji  
 
 ---
 
