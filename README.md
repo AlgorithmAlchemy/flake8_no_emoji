@@ -2,6 +2,9 @@
 
   `⭐️ Thanks everyone who has starred the project, it means a lot!`
 
+```text
+⭐️ Thanks everyone who has starred the project, it means a lot!
+
 ![PyPI version](https://img.shields.io/pypi/v/flake8-no-emoji.svg)
 ![Downloads](https://pepy.tech/badge/flake8-no-emoji)
 ![License](https://img.shields.io/pypi/l/flake8-no-emoji.svg)
