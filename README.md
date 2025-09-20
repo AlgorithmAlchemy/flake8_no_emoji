@@ -1,9 +1,6 @@
-# 📦 flake8-no-emoji
+# flake8-no-emoji
 
   `⭐️ Thanks everyone who has starred the project, it means a lot!`
-
-```text
-⭐️ Thanks everyone who has starred the project, it means a lot!
 
 ![PyPI version](https://img.shields.io/pypi/v/flake8-no-emoji.svg)
 ![Downloads](https://pepy.tech/badge/flake8-no-emoji)
@@ -14,7 +11,7 @@ Helps keep your codebase clean, consistent, and free from unwanted Unicode emoji
 
 ---
 
-## ✨ Features
+## Features
 
 **Note:** Do not set the same category in both `--ignore-emoji-types` and `--only-emoji-types`, as `only` takes precedence.
 
@@ -29,7 +26,7 @@ Helps keep your codebase clean, consistent, and free from unwanted Unicode emoji
 
 ---
 
-## 📥 Installation
+## Installation
 
 ```bash
 pip install flake8-no-emoji
@@ -37,7 +34,7 @@ pip install flake8-no-emoji
 
 ---
 
-## 🚀 Usage
+## Usage
 
 Run normally via `flake8`:
 
@@ -53,7 +50,7 @@ your_code/example.py:3:10: EMO001 Emoji detected in code
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 
 You can configure categories to **ignore** or **allow exclusively**.
 
@@ -76,14 +73,14 @@ This only reports `FLAGS` emojis, ignoring everything else.
 
 ---
 
-## 🧩 Example (with pre-commit)
+## Example (with pre-commit)
 
 Add to `.pre-commit-config.yaml`:
 
 ```yaml
 repos:
   - repo: https://github.com/AlgorithmAlchemy/flake8-no-emoji
-    rev: v0.2.2
+    rev: v0.2.3
     hooks:
       - id: flake8
         additional_dependencies: [flake8-no-emoji]
@@ -97,7 +94,7 @@ pre-commit run --all-files
 
 ---
 
-## 📂 Categories Supported
+## Categories Supported
 
 * **PEOPLE** 👩 👨 😀
 * **NATURE** 🌳 🐶 🌸
@@ -111,13 +108,13 @@ pre-commit run --all-files
 
 ---
 
-## 📝 Error Codes
+## Error Codes
 
 * **EMO001** — Emoji detected in code.
 
 ---
 
-## 🔧 Development
+## Development
 
 Clone and install in editable mode:
 
@@ -130,6 +127,6 @@ pytest
 
 ---
 
-## 📜 License
+## License
 
 MIT License © 2025 [AlgorithmAlchemy](https://github.com/AlgorithmAlchemy)
