@@ -1,4 +1,4 @@
-# flake8_no_emoji/checker.py
+# flake8-no-emoji/checker.py
 from typing import Generator, Tuple, Type
 import emoji
 import regex as re
