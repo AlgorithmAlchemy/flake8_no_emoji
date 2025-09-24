@@ -4,6 +4,7 @@ import emoji
 import regex as re
 from .categories import get_category
 
+
 class NoEmojiChecker:
     name = "flake8_no_emoji"
     version = "0.3.0"
