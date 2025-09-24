@@ -134,19 +134,15 @@ def test_emoji_with_modifiers():
 
 
 def test_many_emojis_in_one_line():
-    # Проверяем цепочку разных категорий и ZWJ эмодзи
     content = "x='😀🐶⭐🛸👩‍💻🏳️‍🌈'"
     results = run_checker_on_content(content)
     assert len(results) == 6, "All emojis including ZWJ and OTHER should be detected"
 
 
 def test_ignore_only_conflict_error():
-    # Проверяем, что конфликт only+ignore корректно обрабатывается
     opts = SimpleNamespace(ignore_emoji_types="NATURE", only_emoji_types="NATURE")
     NoEmojiChecker.parse_options(opts)
     checker = NoEmojiChecker(tree=None, filename="stdin")
-    # Проверяем, что предупреждение при конфликте можно сгенерировать
-    # (тебе нужно добавить raise или лог внутри parse_options)
     assert hasattr(NoEmojiChecker, "_only_categories")
     assert hasattr(NoEmojiChecker, "_ignore_categories")
 
@@ -175,7 +171,6 @@ def test_only_whitespace_and_non_emoji_chars():
 
 
 def test_detect_flags():
-    # Флаги формируются двумя региональными индикаторами
     content = "x='🇺🇸🇩🇪🇯🇵'"
     results = run_checker_on_content(content)
     assert len(results) == 3, "Each flag emoji should be detected correctly"
