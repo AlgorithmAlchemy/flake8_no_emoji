@@ -49,7 +49,7 @@ flake8 flake8_no_emoji/
 ```
 
 ```bash
-flake8 flake8_no_emoji/ --select=EMO
+flake8 --select=EMO
 ```
 
 Example output:
