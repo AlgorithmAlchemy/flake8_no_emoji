@@ -1,11 +1,11 @@
-# flake8-no-emoji/checker.py
+# flake8_no_emoji/checker.py
 from typing import Generator, Tuple, Type
 import emoji
 import regex as re
 from .categories import get_category
 
 class NoEmojiChecker:
-    name = "flake8-no-emoji"
+    name = "flake8_no_emoji"
     version = "0.3.0"
     _error_tmpl = "EMO001 Emoji detected in code"
 

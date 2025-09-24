@@ -34,7 +34,7 @@ Helps keep your codebase clean, consistent, and free from unwanted Unicode emoji
 ## Installation
 
 ```bash
-pip install flake8-no-emoji
+pip install flake8_no_emoji
 ```
 
 ---
@@ -88,7 +88,7 @@ repos:
     rev: v0.2.3
     hooks:
       - id: flake8
-        additional_dependencies: [flake8-no-emoji]
+        additional_dependencies: [flake8_no_emoji]
 ```
 
 Run:
@@ -125,7 +125,7 @@ Clone and install in editable mode:
 
 ```bash
 git clone https://github.com/AlgorithmAlchemy/flake8-no-emoji
-cd flake8-no-emoji
+cd flake8_no_emoji
 pip install -e .[dev]
 pytest
 ```
