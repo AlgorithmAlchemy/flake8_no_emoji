@@ -45,7 +45,7 @@ pip install flake8_no_emoji
 Run normally via `flake8`:
 
 ```bash
-flake8 flake8_no_emoji/
+flake8 /app
 ```
 
 ```bash
@@ -55,7 +55,7 @@ flake8 --select=EMO
 Example output:
 
 ```
-flake8_no_emoji/example.py:3:10: EMO001 Emoji detected in code
+/example.py:3:10: EMO001 Emoji detected in code
 ```
 
 ---
