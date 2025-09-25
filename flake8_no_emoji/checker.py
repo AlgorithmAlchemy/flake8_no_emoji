@@ -66,8 +66,10 @@ class NoEmojiChecker:
                         continue
 
                     snippet = line.strip()
-                    if len(snippet) > 200:
-                        snippet = snippet[:200] + "..."
+                    if len(snippet) > 20:
+                        snippet = snippet[:20] + "..."
 
                     message = f"{self._error_tmpl}: {snippet}"
                     yield lineno, match.start(), message, type(self)
+
+                    break   # stop after 1 match
