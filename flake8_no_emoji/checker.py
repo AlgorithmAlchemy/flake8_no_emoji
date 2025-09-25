@@ -7,7 +7,7 @@ from .categories import get_category
 
 class NoEmojiChecker:
     name = "flake8_no_emoji"
-    version = "0.3.0"
+    version = "0.2.5"
     _error_tmpl = "EMO001 Emoji detected in code"
 
     @classmethod
@@ -53,7 +53,6 @@ class NoEmojiChecker:
             return
 
         for lineno, line in enumerate(lines, start=1):
-            # Use regex \X to get extended grapheme clusters
             for match in re.finditer(r"\X", line):
                 grapheme = match.group()
                 if emoji.is_emoji(grapheme):
@@ -66,4 +65,9 @@ class NoEmojiChecker:
                     if ignore and category and category in ignore:
                         continue
 
-                    yield lineno, match.start(), self._error_tmpl, type(self)
+                    snippet = line.strip()
+                    if len(snippet) > 200:
+                        snippet = snippet[:200] + "..."
+
+                    message = f"{self._error_tmpl}: {snippet}"
+                    yield lineno, match.start(), message, type(self)
