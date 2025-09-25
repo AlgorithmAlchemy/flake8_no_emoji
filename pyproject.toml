@@ -1,3 +1,46 @@
+# pyproject.toml
+
 [build-system]
 requires = ["setuptools>=42", "wheel", "regex"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "flake8-no-emoji"
+version = "0.2.5"
+description = "A Flake8 plugin that detects emojis in Python source code"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [
+  { name = "AlgorithmAlchemy" }
+]
+keywords = ["flake8", "plugin", "emoji", "linter", "pre-commit", "unicode", "code style", "static analysis", "code quality", "no-emoji-in-code"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Quality Assurance",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Text Processing :: Linguistic",
+    "Framework :: Flake8",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "License :: OSI Approved :: MIT License"
+]
+
+dependencies = [
+  "regex",
+  "emoji>=2.0.0"
+]
+
+[project.entry-points."flake8.extension"]
+EMO = "flake8_no_emoji:NoEmojiChecker"
+
+[tool.flake8]
+max-line-length = 88
+select = ["EMO"]
+ignore_emoji_types = ["FACE", "ANIMAL"]
