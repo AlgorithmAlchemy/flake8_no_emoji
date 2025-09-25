@@ -7,7 +7,7 @@ from .categories import get_category
 
 class NoEmojiChecker:
     name = "flake8_no_emoji"
-    version = "0.2.5"
+    version = "0.2.6"
     _error_tmpl = "EMO001 Emoji detected in code"
 
     @classmethod

@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "flake8-no-emoji"
-version = "0.2.5"
+version = "0.2.6"
 description = "A Flake8 plugin that detects emojis in Python source code"
 readme = "README.md"
 requires-python = ">=3.8"
