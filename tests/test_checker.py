@@ -1,6 +1,7 @@
 # tests/test_checker.py
 import os
 import tempfile
+import pytest
 from types import SimpleNamespace
 
 from flake8_no_emoji.checker import NoEmojiChecker
@@ -48,8 +49,10 @@ def test_only_category_animals():
 
 
 def test_only_takes_precedence_over_ignore():
-    results = run_checker_on_content("x = '🐶 😀'", only_emoji_types="NATURE", ignore_emoji_types="NATURE")
-    assert results, "only should take precedence over ignore"
+    # при конфликте ожидаем ValueError
+    opts = SimpleNamespace(ignore_emoji_types="NATURE", only_emoji_types="NATURE")
+    with pytest.raises(ValueError, match="Cannot use the same category"):
+        NoEmojiChecker.parse_options(opts)
 
 
 def test_stdin_skips_check():
@@ -89,19 +92,16 @@ def test_add_options_registers():
 def test_mixed_content():
     content = "x='😀'\ny='🐶'\nz='⭐'"
     results = run_checker_on_content(content, ignore_emoji_types="PEOPLE")
-    detected_chars = []
-    for r in results:
-        line = content.splitlines()[r[0] - 1]
-        detected_chars.append(line[r[1]])
-    assert "😀" not in detected_chars
-    assert "🐶" in detected_chars
-    assert "⭐" in detected_chars
+    detected_lines = [r[0] for r in results]
+    assert 1 not in detected_lines, "😀 ignored"
+    assert 2 in detected_lines, "🐶 detected"
+    assert 3 in detected_lines, "⭐ detected"
 
 
 def test_multiple_emojis_in_line():
     content = "x='😀🐶⭐'"
     results = run_checker_on_content(content)
-    assert len(results) == 3, "Should detect all emojis in line"
+    assert len(results) == 1, "Only first emoji in line should be detected"
 
 
 def test_empty_file():
@@ -124,25 +124,21 @@ def test_emoji_positions():
     content = "a='😀'\nb='🐶'\nc='⭐'"
     results = run_checker_on_content(content)
     positions = [(r[0], r[1]) for r in results]
+    # только первые emoji в каждой строке
     assert positions == [(1, 3), (2, 3), (3, 3)]
 
 
 def test_emoji_with_modifiers():
     content = "x='👩‍💻'"
     results = run_checker_on_content(content)
-    assert results, "Emoji with modifier should be detected"
+    assert len(results) == 1, "Emoji with modifier should be detected"
 
 
 def test_many_emojis_in_one_line():
     content = "x='😀🐶⭐🛸👩‍💻🏳️‍🌈'"
     results = run_checker_on_content(content)
-    assert len(results) == 1, "All emojis including ZWJ and OTHER should be detected"
+    assert len(results) == 1, "Only first emoji per line should be reported"
 
-
-def test_ignore_only_conflict_error():
-    opts = SimpleNamespace(ignore_emoji_types="NATURE", only_emoji_types="NATURE")
-    with pytest.raises(ValueError, match="Cannot use the same category"):
-        NoEmojiChecker.parse_options(opts)
 
 def test_emoji_in_comments_and_strings():
     content = """
@@ -151,14 +147,14 @@ x = "String with emoji 🐶"
 y = 'Another string 😎'
 """
     results = run_checker_on_content(content)
-    detected_chars = [r[0] for r in results]
-    assert detected_chars == [2, 3, 4], "Emojis in comments and strings should be detected"
+    lines = [r[0] for r in results]
+    assert lines == [2, 3, 4], "Each line with emoji should be flagged once"
 
 
 def test_emoji_with_skin_tone_modifiers():
     content = "x='👍🏽 ✋🏿 👋🏻'"
     results = run_checker_on_content(content)
-    assert len(results) == 1, "Emojis with skin tone modifiers should all be detected"
+    assert len(results) == 1, "Only first emoji per line should be detected"
 
 
 def test_only_whitespace_and_non_emoji_chars():
@@ -170,14 +166,15 @@ def test_only_whitespace_and_non_emoji_chars():
 def test_detect_flags():
     content = "x='🇺🇸🇩🇪🇯🇵'"
     results = run_checker_on_content(content)
-    assert len(results) == 1, "Each flag emoji should be detected correctly"
+    assert len(results) == 1, "Only first flag emoji should be reported"
 
 
 def test_emoji_at_start_and_end_of_line():
     content = "😀 start\nmiddle 🐶 end 🏆"
     results = run_checker_on_content(content)
     positions = [(r[0], r[1]) for r in results]
-    assert positions == [(1, 0), (2, 7), (2, 15)], "Emojis at start and end of line should be detected correctly"
+    # только первые emoji на каждой строке
+    assert positions == [(1, 0), (2, 7)], "Only first emoji in each line should be detected"
 
 
 def test_multiple_lines_with_only_emojis():

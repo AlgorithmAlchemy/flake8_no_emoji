@@ -35,7 +35,7 @@ precedence.
 ## Installation
 
 ```bash
-pip install flake8_no_emoji
+pip install flake8-no-emoji
 ```
 
 ---
@@ -130,7 +130,7 @@ Clone and install in editable mode:
 
 ```bash
 git clone https://github.com/AlgorithmAlchemy/flake8-no-emoji
-cd flake8_no_emoji
+cd flake8-no-emoji
 pip install -e .[dev]
 pytest
 ```
