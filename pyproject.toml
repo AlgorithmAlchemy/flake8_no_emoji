@@ -43,4 +43,3 @@ EMO = "flake8_no_emoji:NoEmojiChecker"
 [tool.flake8]
 max-line-length = 88
 select = ["EMO"]
-ignore_emoji_types = ["FACE", "ANIMAL"]
