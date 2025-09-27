@@ -67,4 +67,4 @@ class NoEmojiChecker:
                         continue
 
                     yield lineno, match.start(), self._error_tmpl, type(self)
-                    break   # stop after 1 match
+                    break  # stop after 1 match
