@@ -3,7 +3,7 @@
 `⭐️ Thanks everyone who has starred the project, it means a lot!`
 
 [![PyPI version](https://img.shields.io/pypi/v/flake8-no-emoji.svg?logo=pypi&logoColor=white)](https://pypi.org/project/flake8-no-emoji/)
-Install from **PyPI** by clicking the badge above
+Install from **PyPI** by clicking the badge above.
 
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-black?logo=github&logoColor=white)](https://github.com/AlgorithmAlchemy/flake8-no-emoji)  
 View the **source code on GitHub**
@@ -19,7 +19,7 @@ Helps keep your codebase clean, consistent, and free from unwanted Unicode emoji
 ## Features
 
 **Note:** Do not set the same category in both `--ignore-emoji-types` and `--only-emoji-types`, as `only` takes
-precedence.
+precedence over ignore.
 
 * Scans Python files for **all Unicode emoji characters** (including multi-codepoint clusters).
 * Raises a linting error (`EMO001`) when emojis are found.
@@ -45,7 +45,7 @@ pip install flake8-no-emoji
 Run normally via `flake8`:
 
 ```bash
-flake8 /app
+flake8 app
 ```
 
 ```bash
@@ -93,7 +93,7 @@ repos:
     rev: v0.2.6
     hooks:
       - id: flake8
-        additional_dependencies: [ flake8_no_emoji ]
+        additional_dependencies: [ flake8-no-emoji ]
 ```
 
 Run:
