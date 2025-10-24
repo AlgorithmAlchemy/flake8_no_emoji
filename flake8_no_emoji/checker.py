@@ -1,7 +1,9 @@
 # flake8_no_emoji/checker.py
 from typing import Generator, Tuple, Type
+
 import emoji
 import regex as re
+
 from .categories import get_category
 
 
@@ -28,10 +30,12 @@ class NoEmojiChecker:
     @classmethod
     def parse_options(cls, options) -> None:
         cls._ignore_categories = {
-            s.strip().upper() for s in getattr(options, "ignore_emoji_types", "").split(",") if s.strip()
+            s.strip().upper() for s in
+            getattr(options, "ignore_emoji_types", "").split(",") if s.strip()
         }
         cls._only_categories = {
-            s.strip().upper() for s in getattr(options, "only_emoji_types", "").split(",") if s.strip()
+            s.strip().upper() for s in
+            getattr(options, "only_emoji_types", "").split(",") if s.strip()
         }
 
         if cls._ignore_categories & cls._only_categories:
@@ -42,7 +46,8 @@ class NoEmojiChecker:
     def __init__(self, tree, filename: str = "stdin") -> None:
         self.filename = filename
 
-    def run(self) -> Generator[Tuple[int, int, str, Type["NoEmojiChecker"]], None, None]:
+    def run(self) -> Generator[
+        Tuple[int, int, str, Type["NoEmojiChecker"]], None, None]:
         if self.filename == "stdin":
             return
 
@@ -57,9 +62,11 @@ class NoEmojiChecker:
             for match in re.finditer(r"\X", line):
                 grapheme = match.group()
                 if emoji.is_emoji(grapheme):
-                    category = get_category(grapheme).upper() if get_category else None
+                    category = get_category(
+                        grapheme).upper() if get_category else None
                     only = getattr(self.__class__, "_only_categories", set())
-                    ignore = getattr(self.__class__, "_ignore_categories", set())
+                    ignore = getattr(self.__class__, "_ignore_categories",
+                                     set())
 
                     if only and category and category not in only:
                         continue

@@ -1,13 +1,15 @@
 # tests/test_checker.py
 import os
 import tempfile
-import pytest
 from types import SimpleNamespace
+
+import pytest
 
 from flake8_no_emoji.checker import NoEmojiChecker
 
 
-def run_checker_on_content(content, ignore_emoji_types=None, only_emoji_types=None, filename=None):
+def run_checker_on_content(content, ignore_emoji_types=None,
+                           only_emoji_types=None, filename=None):
     """
     Write content to a temp file (if filename not provided), set options, run checker, return results.
     Allows passing a real file path for special cases like unreadable or binary files.
@@ -59,7 +61,8 @@ def test_only_category_animals():
 
 def test_only_takes_precedence_over_ignore():
     # при конфликте ожидаем ValueError
-    opts = SimpleNamespace(ignore_emoji_types="NATURE", only_emoji_types="NATURE")
+    opts = SimpleNamespace(ignore_emoji_types="NATURE",
+                           only_emoji_types="NATURE")
     with pytest.raises(ValueError, match="Cannot use the same category"):
         NoEmojiChecker.parse_options(opts)
 
@@ -183,7 +186,8 @@ def test_emoji_at_start_and_end_of_line():
     results = run_checker_on_content(content)
     positions = [(r[0], r[1]) for r in results]
     # только первые emoji на каждой строке
-    assert positions == [(1, 0), (2, 7)], "Only first emoji in each line should be detected"
+    assert positions == [(1, 0), (2,
+                                  7)], "Only first emoji in each line should be detected"
 
 
 def test_multiple_lines_with_only_emojis():
@@ -283,7 +287,8 @@ def test_only_category_with_no_matches():
 
 
 def test_ignore_category_with_all_matches():
-    results = run_checker_on_content("x = '😀🐶⭐'", ignore_emoji_types="PEOPLE,NATURE,SYMBOLS")
+    results = run_checker_on_content("x = '😀🐶⭐'",
+                                     ignore_emoji_types="PEOPLE,NATURE,SYMBOLS")
     assert results == [], "Ignoring all categories with matches should yield no results"
 
 
@@ -335,7 +340,8 @@ def test_comment_with_emoji_and_text():
 def test_long_line_with_multiple_emojis():
     content = "x = '😀🐶⭐🛸👩‍💻🏳️‍🌈' * 100"
     results = run_checker_on_content(content)
-    assert len(results) == 1, "Only first emoji per line should be reported even for long lines"
+    assert len(
+        results) == 1, "Only first emoji per line should be reported even for long lines"
 
 
 def test_ignore_case_category_names():

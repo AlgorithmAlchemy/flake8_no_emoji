@@ -11,17 +11,21 @@ View the **source code on GitHub**
 ![Downloads](https://pepy.tech/badge/flake8-no-emoji)
 ![License](https://img.shields.io/pypi/l/flake8-no-emoji.svg)
 
-**Flake8 plugin that detects and reports any emoji characters in Python source code.**
-Helps keep your codebase clean, consistent, and free from unwanted Unicode emojis.
+**Flake8 plugin that detects and reports any emoji characters in Python source
+code.**
+Helps keep your codebase clean, consistent, and free from unwanted Unicode
+emojis.
 
 ---
 
 ## Features
 
-**Note:** Do not set the same category in both `--ignore-emoji-types` and `--only-emoji-types`, as `only` takes
+**Note:** Do not set the same category in both `--ignore-emoji-types` and
+`--only-emoji-types`, as `only` takes
 precedence over ignore.
 
-* Scans Python files for **all Unicode emoji characters** (including multi-codepoint clusters).
+* Scans Python files for **all Unicode emoji characters** (including
+  multi-codepoint clusters).
 * Raises a linting error (`EMO001`) when emojis are found.
 * Supports filtering by **emoji categories**:
 
@@ -70,7 +74,8 @@ You can configure categories to **ignore** or **allow exclusively**.
 flake8 --ignore-emoji-types=PEOPLE,FOOD
 ```
 
-This ignores emojis in the `PEOPLE` and `FOOD` categories, but still reports others.
+This ignores emojis in the `PEOPLE` and `FOOD` categories, but still reports
+others.
 
 ### Allow only specific categories
 
